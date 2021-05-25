@@ -1,9 +1,6 @@
 #!/usr/bin/python
-
 import socket
 from threading import Thread
-import time
-
 
 class Main:
     def __init__(self):
@@ -33,20 +30,17 @@ class Main:
         while True:
             try:
                 message = client.recv(1024).decode()
-                Tools().announce(message)
+                self.announce(message)
                 print(message)
             except:
                 self.clients.remove(client)
                 client.close()
                 break
 
-class Tools(Main):
-    def __init__(self):
-        ...
-
     def announce(self, _input_):
-        for client in Main().clients:
+        for client in self.clients:
             client.send(_input_.encode())
+
 
 if __name__ == '__main__':
     Main().main()
