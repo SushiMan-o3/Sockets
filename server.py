@@ -7,6 +7,7 @@ class Main:
         self.IPv4 = socket.gethostbyname(socket.gethostname())
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.clients = []
+        
 
     def main(self):
         self.server.bind((self.IPv4, 5050))
