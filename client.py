@@ -19,12 +19,13 @@ class Main:
         
         (Thread(target = self.announce)).start()
         (Thread(target = self.recive)).start()
+        Interface().main()
 
     def recive(self):
         while True:
             print(self.server.recv(1024).decode())
 
-    def announce(self):       
+    def announce(self):
         while True:
             message = input()
             self.server.send(f"{self.user}: {message}".encode())
@@ -36,10 +37,12 @@ class Interface(Main):
         super().__init__()
 
     def main(self):
+        self.window = tkinter.Tk()
+        
         func = ['assets', 'other']
         for func in func:
             eval(f'self.{func}()')
-        (Thread(target = self.message_send)).start()
+        #(Thread(target = self.message_send)).start()
         self.window.mainloop()
 
     def message_send(self):
@@ -50,6 +53,7 @@ class Interface(Main):
 
     def other(self):
         (tkinter.Label(
+            self.window,
             text="Malla Family | Chat Room",
             foreground="white",
             background="#86c232",
@@ -63,6 +67,7 @@ class Interface(Main):
         self.window.geometry('1000x600')
         self.window['background'] = '#222629'
         self.window.iconbitmap('Assets/chat-logo.ico')
+
 
 if __name__ == "__main__":
     Main().main()
