@@ -1,26 +1,24 @@
 #!/usr/bin/python
 
-import socket 
+import socket
 from threading import Thread
 import tkinter
 
 
-class main:
+class Main:
     def __init__(self):
         self.server = socket.socket()
-        self.host = '192.168.86.78'
+        self.host = "192.168.86.78"
 
     def main(self):
         self.server.connect((self.host, 5050))
         print(self.server.recv(1024).decode())
 
-        self.user = (input('Give your self a name: ')).replace(' ', '')
-
+        self.user = (input("Give your self a name: ")).replace(' ', '')
+        self.server.send(self.user.encode())
+        
         (Thread(target = self.announce)).start()
         (Thread(target = self.recive)).start()
-        
-        interface().main()
-
 
     def recive(self):
         while True:
@@ -28,24 +26,34 @@ class main:
 
     def announce(self):       
         while True:
-            message = input(f'{self.user}: ')
-            self.server.send(f'{self.user}: {message}'.encode())
+            message = input()
+            self.server.send(f"{self.user}: {message}".encode())
 
-class interface(main):
+
+
+class Interface(Main):
     def __init__(self):
-        self.window = tkinter.Tk()
+        super().__init__()
 
     def main(self):
-        self.assets()
-        self.other()
+        func = ['assets', 'other']
+        for func in func:
+            eval(f'self.{func}()')
+        (Thread(target = self.message_send)).start()
         self.window.mainloop()
+
+    def message_send(self):
+        while True:
+            message = tkinter.Entry(self.window)
+            message.pack()
+            self.server.send(f'{Main().user}: {message}'.encode())
 
     def other(self):
         (tkinter.Label(
             text="Malla Family | Chat Room",
-            foreground="white",  
+            foreground="white",
             background="#86c232",
-            padx = 1000, 
+            padx = 1000,
             pady = 5,
             font = 7
         )).pack()
@@ -56,7 +64,5 @@ class interface(main):
         self.window['background'] = '#222629'
         self.window.iconbitmap('Assets/chat-logo.ico')
 
-
-
 if __name__ == "__main__":
-    main().main()
+    Main().main()
