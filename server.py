@@ -1,70 +1,52 @@
 #!/usr/bin/python
 
-import socket 
+import socket
 from threading import Thread
-import tkinter
 
-class main:
+
+class Main:
     def __init__(self):
-        self.server = socket.socket()
-        self.host = '192.168.86.78'
+        self.IPv4 = socket.gethostbyname(socket.gethostname())
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.clients = []
 
     def main(self):
-        self.server.connect((self.host, 5050))
-        print(self.server.recv(1024).decode())
+        self.server.bind((self.IPv4, 5050))
+        self.server.listen()
 
-        self.user = (input('Give your self a name: ')).replace(' ', '')
+        print(f'Servers local ip: {self.IPv4}')
 
-        #(Thread(target = self.announce)).start()
-        (Thread(target = self.recive)).start()
-        
-        interface().main()
+        self.check_connections()
 
-
-    def recive(self):
+    def check_connections(self):
         while True:
-            print(self.server.recv(1024).decode())
-"""
-    def announce(self):       
+            connection, ip_address = self.server.accept()
+            self.clients.append(connection)
+
+            connection.send("You are now connected to the server!".encode())
+
+            self.user = connection.recv(1024).decode()
+            self.broadcast(f"{self.user} has joined the Chat Room! [{ip_address}]")
+
+            Thread(target=self.check_message, args=(connection,)).start()
+
+    def check_message(self, client):
         while True:
-            message = input(f'{self.user}: ')
-            self.server.send(f'{self.user}: {message}'.encode())
-"""
-class interface(main):
-    def __init__(self):
-        super().__init__()
-        self.window = tkinter.Tk()
+            try:
+                message = client.recv(1024).decode()
+                self.broadcast(message)
+            except:
+                self.clients.remove(client)
+                client.close()
+                break
 
-    def main(self):
-        self.assets()
-        self.other()
-        (Thread(target = self.message_send)).start()
-        self.window.mainloop()
+    def broadcast(self, _input_):
+        print(_input_)
+        try:
+            for client in self.clients:
+                client.send(_input_.encode())
+        except:
+            print("I wasn't able to send messages to all clients")
 
-    def message_send(self):
-        while True:
-            message = tkinter.Entry(self.window)
-            message.pack()
-            self.server.send(f'{main().user}: {message}'.encode())
-            
-    def other(self):
-        (tkinter.Label(
-            text="Malla Family | Chat Room",
-            foreground="white",  
-            background="#86c232",
-            padx = 1000, 
-            pady = 5,
-            font = 7
-        )).pack()
-
-    def assets(self):
-        self.window.title('Chat Room')
-        self.window.geometry('1000x600')
-        self.window['background'] = '#222629'
-        self.window.iconbitmap('Assets/chat-logo.ico')
-
-
-
-if __name__ == "__main__":
-    main().main()
-
+if __name__ == '__main__':
+    Main().main()
