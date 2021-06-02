@@ -2,6 +2,7 @@
 
 import socket
 from threading import Thread
+import json
 
 
 class Main:
@@ -42,11 +43,22 @@ class Main:
 
     def broadcast(self, _input_):
         print(_input_)
+        for client in self.clients:
+            client.send(_input_.encode())
+
+        with open('Assets/messages.json') as f:
+            messages = json.load(f)
+
         try:
-            for client in self.clients:
-                client.send(_input_.encode())
-        except:
-            print("I wasn't able to send messages to all clients")
+            message = _input_.split(':', 1)
+            messages[message[0]] = message[1]
+        except IndexError:
+            messages["Announcer"] = _input_
+
+        with open('Assets/messages.json', 'w') as f:
+            json.dump(messages, f, indent = 4)
+
 
 if __name__ == '__main__':
     Main().main()
+

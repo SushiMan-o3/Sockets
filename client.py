@@ -19,7 +19,6 @@ class Main:
         
         (Thread(target = self.announce)).start()
         (Thread(target = self.recive)).start()
-        Interface().main()
 
     def recive(self):
         while True:
@@ -38,7 +37,7 @@ class Interface(Main):
 
     def main(self):
         self.window = tkinter.Tk()
-        
+
         func = ['assets', 'other']
         for func in func:
             eval(f'self.{func}()')
@@ -54,7 +53,7 @@ class Interface(Main):
     def other(self):
         (tkinter.Label(
             self.window,
-            text="Malla Family | Chat Room",
+            text="Garbage | Chat Room",
             foreground="white",
             background="#86c232",
             padx = 1000,
