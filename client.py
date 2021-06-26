@@ -38,7 +38,7 @@ class Interface(Main):
     def main(self):
         self.window = tkinter.Tk()
 
-        func = ['assets', 'other']
+        func = ['assets', 'other', 'messages']
         for func in func:
             eval(f'self.{func}()')
         #(Thread(target = self.message_send)).start()
@@ -66,6 +66,19 @@ class Interface(Main):
         self.window.geometry('1000x600')
         self.window['background'] = '#222629'
         self.window.iconbitmap('Assets/chat-logo.ico')
+
+    def messages(self):
+        self.textCons = tkinter.Text(self.Window,
+                             width = 20, 
+                             height = 2,
+                             background = "#86c232",
+                             foreground = "white",
+                             font = "10", 
+                             padx = 5,
+                             pady = 5)
+
+    def recive(self):
+        ...
 
 
 if __name__ == "__main__":

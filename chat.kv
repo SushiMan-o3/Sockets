@@ -1,0 +1,25 @@
+# Filename: chat.kv
+
+<ConnectPage>:
+    GridLayout:
+        cols:1
+        size: root.width, root.height
+
+        GridLayout:
+            cols:2
+
+            Label:
+                text: "Username"
+
+            TextInput:
+                multinline:False
+
+            Label:
+                text: "IP:Port"
+
+            TextInput:
+                multiline:False
+
+        Button:
+            text:"Submit"
+            on_press: app.btn()
