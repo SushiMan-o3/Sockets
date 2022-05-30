@@ -2,7 +2,6 @@
 
 import socket
 from threading import Thread
-import tkinter
 
 
 class Main:
@@ -28,57 +27,6 @@ class Main:
         while True:
             message = input()
             self.server.send(f"{self.user}: {message}".encode())
-
-
-
-class Interface(Main):
-    def __init__(self):
-        super().__init__()
-
-    def main(self):
-        self.window = tkinter.Tk()
-
-        func = ['assets', 'other', 'messages']
-        for func in func:
-            eval(f'self.{func}()')
-        #(Thread(target = self.message_send)).start()
-        self.window.mainloop()
-
-    def message_send(self):
-        while True:
-            message = tkinter.Entry(self.window)
-            message.pack()
-            self.server.send(f'{Main().user}: {message}'.encode())
-
-    def other(self):
-        (tkinter.Label(
-            self.window,
-            text="Garbage | Chat Room",
-            foreground="white",
-            background="#86c232",
-            padx = 1000,
-            pady = 5,
-            font = 7
-        )).pack()
-
-    def assets(self):
-        self.window.title('Chat Room')
-        self.window.geometry('1000x600')
-        self.window['background'] = '#222629'
-        self.window.iconbitmap('Assets/chat-logo.ico')
-
-    def messages(self):
-        self.textCons = tkinter.Text(self.Window,
-                             width = 20, 
-                             height = 2,
-                             background = "#86c232",
-                             foreground = "white",
-                             font = "10", 
-                             padx = 5,
-                             pady = 5)
-
-    def recive(self):
-        ...
 
 
 if __name__ == "__main__":
