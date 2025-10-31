@@ -7,13 +7,15 @@ from threading import Thread
 class Main:
     def __init__(self):
         self.server = socket.socket()
-        self.host = "192.168.86.78"
+        self.host = None
+        self.user = None
 
     def main(self):
+        self.host = input("Enter an IPv4 address: ")
         self.server.connect((self.host, 5050))
         print(self.server.recv(1024).decode())
 
-        self.user = (input("Give your self a name: ")).replace(' ', '')
+        self.user = (input("Enter a name: ")).replace(' ', '')
         self.server.send(self.user.encode())
         
         (Thread(target = self.announce)).start()

@@ -2,7 +2,8 @@
 
 import socket
 from threading import Thread
-import json
+import time
+import sqlite3
 
 
 class Main:
@@ -15,8 +16,7 @@ class Main:
         self.server.bind((self.IPv4, 5050))
         self.server.listen()
 
-        print(f'Servers local ip: {self.IPv4}')
-
+        print(f'Servers local ip: {self.IPv4}')       
         self.check_connections()
 
     def check_connections(self):
@@ -46,18 +46,24 @@ class Main:
         for client in self.clients:
             client.send(_input_.encode())
 
-        with open('Assets/messages.json') as f:
-            messages = json.load(f)
-
         try:
-            message = _input_.split(':', 1)
-            messages[message[0]] = message[1]
-        except IndexError:
-            messages["Announcer"] = _input_
+            user, message = _input_.split(':', 1)
+        except:
+            user = 'Server'
+            message = _input_
 
-        with open('Assets/messages.json', 'w') as f:
-            json.dump(messages, f, indent = 4)
+        current_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
+        conn = sqlite3.connect('messageHistory.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''CREATE TABLE IF NOT EXISTS messages
+                       (user TEXT, message TEXT, timestamp TEXT, server_ip TEXT)''')
+
+        cursor.execute('INSERT INTO messages (user, message, timestamp, server_ip) VALUES (?, ?, ?, ?)',
+                       (user, message, current_time, self.IPv4))
+        conn.commit()
+        conn.close()
 
 if __name__ == '__main__':
     Main().main()
